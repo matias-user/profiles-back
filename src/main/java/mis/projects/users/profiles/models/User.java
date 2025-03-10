@@ -2,6 +2,8 @@ package mis.projects.users.profiles.models;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -32,6 +34,7 @@ public class User {
     @Max(8)
     private int phoneNumber; 
     @OneToMany( mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE } )
+    @JsonManagedReference
     private List<Role> roles;
     public int getId() {
         return id;
