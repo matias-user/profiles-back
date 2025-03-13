@@ -1,21 +1,28 @@
 package mis.projects.users.profiles.services;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import mis.projects.users.profiles.models.Role;
 import mis.projects.users.profiles.models.User;
+import mis.projects.users.profiles.repositories.RoleRepository;
 import mis.projects.users.profiles.repositories.UserRepository;
 
 @Service
 public class UserServiceImp implements UserService {
 
     private UserRepository repo;
-    
-    public UserServiceImp(UserRepository repo) {
+    private RoleRepository roleRepo;
+
+    public UserServiceImp(UserRepository repo, RoleRepository roleRepo) {
         this.repo = repo;
+        this.roleRepo = roleRepo;
     }
 
     @Override
@@ -46,9 +53,35 @@ public class UserServiceImp implements UserService {
         User user = repo.findById(id).get();
         repo.delete(user);
         Map<String, Object> json = new HashMap<>();
-        json.put("message", "Usuario con id: "+ id+ "ha sido correctamente eliminado");
+        json.put("message", "Usuario con id: " + id + "ha sido correctamente eliminado");
         return json;
     }
-    
-    
+
+    @Override
+    @Transactional
+    public User assignRoles(int user_id, List<String> roles) {
+        User user = repo.findById(user_id).orElseThrow();
+        List<Role> rolesList = roleRepo.findByNameIn(roles);
+
+        // Validar si existen los roles
+        if (rolesList.size() != roles.size()) {
+            List<String> foundRoles = rolesList.stream()
+                    .map(Role::getName)
+                    .collect(Collectors.toList());
+            List<String> missingRoles = roles.stream()
+                    .filter(role -> !foundRoles.contains(role))
+                    .collect(Collectors.toList());
+            throw new IllegalArgumentException("Roles no encontrados: " + missingRoles);
+        }
+
+        user.setRoles(rolesList);
+
+        return repo.save(user);
+    }
+
+    @Override
+    public User create(User user) {
+        return repo.save(user);
+    }
+
 }

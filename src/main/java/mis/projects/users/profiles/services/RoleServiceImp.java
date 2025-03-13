@@ -4,12 +4,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.stereotype.Service;
+
 import mis.projects.users.profiles.models.Role;
 import mis.projects.users.profiles.repositories.RoleRepository;
 
+@Service
 public class RoleServiceImp implements RoleService {
 
     private RoleRepository repo;
+
+    public RoleServiceImp( RoleRepository repo) {
+        this.repo = repo;
+    }
 
     @Override
     public List<Role> findAll() {
@@ -35,6 +42,11 @@ public class RoleServiceImp implements RoleService {
         repo.delete(role);
         json.put("message", "Rol con id "+id+" ha sido satisfactoriamente eliminado.");
         return json;
+    }
+
+    @Override
+    public Role create(Role role) {
+        return repo.save(role);
     }
     
 }

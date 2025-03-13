@@ -7,13 +7,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
@@ -30,11 +31,13 @@ public class User {
     regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,7}$",
     message = "El email ingresado no es válido")
     private String email;
-    @Min(8)
-    @Max(8)
     private int phoneNumber; 
-    @OneToMany( mappedBy = "user", cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE } )
-    @JsonManagedReference
+    @ManyToMany( fetch = FetchType.LAZY, cascade = { CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE } )
+    @JoinTable(
+        name = "user_roles",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private List<Role> roles;
     public int getId() {
         return id;
@@ -70,7 +73,8 @@ public class User {
         return roles;
     }
     public void setRoles(List<Role> roles) {
-        this.roles = roles;
+        this.roles.clear(); 
+            this.roles.addAll(roles);
     }
     @Override
     public String toString() {

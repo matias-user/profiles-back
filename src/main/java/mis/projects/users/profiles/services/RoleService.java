@@ -11,4 +11,5 @@ public interface RoleService {
     Role findById(int id);
     Role updateById(int id, Role role);
     Map<String, Object> deleteById(int id);
+    Role create(Role role);
 }
