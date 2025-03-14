@@ -41,7 +41,7 @@ public class UserServiceImp implements UserService {
         User userToUpdate = repo.findById(id).orElseThrow( () -> new UserNotFoundException("Usuario con id: "+id +" no ha sido encontrado") );
         userToUpdate.setId(0);
         userToUpdate.setEmail(user.getEmail());
-        userToUpdate.setName(user.getName());
+        userToUpdate.setUsername(user.getUsername());
         userToUpdate.setLastname(user.getLastname());
         userToUpdate.setPhoneNumber(user.getPhoneNumber());
         userToUpdate.setRoles(user.getRoles());

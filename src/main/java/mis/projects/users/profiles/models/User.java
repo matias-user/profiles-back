@@ -31,8 +31,9 @@ public class User {
     @GeneratedValue( strategy = GenerationType.IDENTITY )
     @Id
     private int id;
-    private String name;
+    private String username;
     private String lastname;
+    private String password;
     @Column( unique = true )
     @Pattern(
     regexp = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,7}$",
@@ -54,7 +55,7 @@ public class User {
    
     @Override
     public String toString() {
-        return "User [id=" + id + ", name=" + name + ", lastname=" + lastname + ", email=" + email + ", phoneNumber="
+        return "User [id=" + id + ", name=" + username + ", lastname=" + lastname + ", email=" + email + ", phoneNumber="
                 + phoneNumber + ", roles=" + roles + "]";
     }
 
